@@ -1,0 +1,151 @@
+# Copyright (c) 2017 - 2018, Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig SPI_NRF5
+	bool "nRF5 SPI drivers"
+	depends on SOC_FAMILY_NRF5
+	help
+	  Enable support for nRF5 MCU series SPI drivers. Peripherals with the
+	  same instance id can not be used together, e.g., SPIM_0 and I2C_0
+	  (TWIM0) and SPIS_0. You may need to disable I2C_0 or I2C_1.
+
+if SPI_NRF5
+
+# nordic twiX0, spiX0, spi0 instances can not be used at the same time
+if SPI_0 && !I2C_0
+
+config SPI_0_NRF5
+	bool "nRF5 SPI 0"
+	depends on SOC_SERIES_NRF52X || SOC_SERIES_NRF51X
+	select NRFX_SPI
+	help
+	  Enable nRF5 SPI Master without EasyDMA on port 0
+
+if SPI_0_NRF5
+
+config SPI_0_NRF5_SCK_PIN
+	int "SCK pin number"
+	range 0 47 if SOC_NRF52840_QIAA
+	range 0 31
+	help
+	  GPIO pin number to use for SCK
+
+config SPI_0_NRF5_MOSI_PIN
+	int "MOSI pin number"
+	range 0 47 if SOC_NRF52840_QIAA
+	range 0 31
+	help
+	  GPIO pin number to use for MOSI
+
+config SPI_0_NRF5_MISO_PIN
+	int "MISO pin number"
+	range 0 47 if SOC_NRF52840_QIAA
+	range 0 31
+	help
+	  GPIO pin number to use for MISO
+
+config SPI_0_NRF5_ORC
+	hex "Over-read Character"
+	range 0x00 0xff
+	default 0xff
+	help
+	  Over-read character. Character clocked out after an over-read
+	  of the transmit buffer.
+
+endif # SPI_0_NRF5
+
+endif # SPI_0 && !I2C_0
+
+# nordic twiX1, spiX1, spi1 instances can not be used at the same time
+if SPI_1 && !I2C_1
+
+config SPI_1_NRF5
+	bool "nRF5 SPI 1"
+	depends on SOC_SERIES_NRF52X || SOC_SERIES_NRF51X
+	select NRFX_SPI
+	help
+	  Enable nRF5 SPI Master without EasyDMA on port 1
+
+if SPI_1_NRF5
+
+config SPI_1_NRF5_SCK_PIN
+	int "SCK pin number"
+	range 0 47 if SOC_NRF52840_QIAA
+	range 0 31
+	help
+	  GPIO pin number to use for SCK
+
+config SPI_1_NRF5_MOSI_PIN
+	int "MOSI pin number"
+	range 0 47 if SOC_NRF52840_QIAA
+	range 0 31
+	help
+	  GPIO pin number to use for MOSI
+
+config SPI_1_NRF5_MISO_PIN
+	int "MISO pin number"
+	range 0 47 if SOC_NRF52840_QIAA
+	range 0 31
+	help
+	  GPIO pin number to use for MISO
+
+config SPI_1_NRF5_ORC
+	hex "Over-read Character"
+	range 0x00 0xff
+	default 0xff
+	help
+	  Over-read character. Character clocked out after an over-read
+	  of the transmit buffer.
+
+endif # SPI_1_NRF5
+
+endif # SPI_1 && !I2C_1
+
+# nordic twiX2, spiX2, spi2 instances can not be used at the same time
+if SPI_2 && !I2C_2
+
+config SPI_2_NRF5
+	bool "nRF5 SPI 2"
+	depends on SOC_SERIES_NRF52X
+	select NRFX_SPI
+	help
+	  Enable nRF5 SPI Master without EasyDMA on port 2
+
+if SPI_2_NRF5
+
+config SPI_2_NRF5_SCK_PIN
+	int "SCK pin number"
+	range 0 47 if SOC_NRF52840_QIAA
+	range 0 31
+	help
+	  GPIO pin number to use for SCK
+
+config SPI_2_NRF5_MOSI_PIN
+	int "MOSI pin number"
+	range 0 47 if SOC_NRF52840_QIAA
+	range 0 31
+	help
+	  GPIO pin number to use for MOSI
+
+config SPI_2_NRF5_MISO_PIN
+	int "MISO pin number"
+	range 0 47 if SOC_NRF52840_QIAA
+	range 0 31
+	help
+	  GPIO pin number to use for MISO
+
+config SPI_2_NRF5_ORC
+	hex "Over-read Character"
+	range 0x00 0xff
+	default 0xff
+	help
+	  Over-read character. Character clocked out after an over-read
+	  of the transmit buffer.
+
+endif # SPI_2_NRF5
+
+endif # SPI_2 && !I2C_2
+
+endif # SPI_NRF5
