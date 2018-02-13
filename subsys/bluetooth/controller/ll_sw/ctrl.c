@@ -1367,7 +1367,7 @@ static inline u32_t isr_rx_scan(u8_t devmatch_ok, u8_t devmatch_id,
 		conn->hdr.ticks_preempt_to_start =
 			TICKER_US_TO_TICKS(RADIO_TICKER_PREEMPT_PART_MIN_US);
 		conn->hdr.ticks_slot = _radio.scanner.ticks_conn_slot;
-		ticks_slot_offset = (conn->hdr. ticks_active_to_start <
+		ticks_slot_offset = (conn->hdr.ticks_active_to_start <
 				     conn->hdr.ticks_xtal_to_start) ?
 				    conn->hdr.ticks_xtal_to_start :
 				    conn->hdr.ticks_active_to_start;
@@ -1428,7 +1428,7 @@ static inline u32_t isr_rx_scan(u8_t devmatch_ok, u8_t devmatch_id,
 			pdu_adv_tx->connect_ind.win_offset = 0;
 		} else {
 			conn_space_us = _radio.scanner.win_offset_us +
-					ticks_slot_offset;
+					TICKER_TICKS_TO_US(ticks_slot_offset);
 			while ((conn_space_us & ((u32_t)1 << 31)) ||
 			       (conn_space_us < conn_offset_us)) {
 				conn_space_us += conn_interval_us;
@@ -1528,7 +1528,7 @@ static inline u32_t isr_rx_scan(u8_t devmatch_ok, u8_t devmatch_id,
 		}
 
 		radio_le_conn_cmplt->interval = _radio.scanner.conn_interval;
-		radio_le_conn_cmplt->latency = _radio.scanner. conn_latency;
+		radio_le_conn_cmplt->latency = _radio.scanner.conn_latency;
 		radio_le_conn_cmplt->timeout = _radio.scanner.conn_timeout;
 		radio_le_conn_cmplt->mca =
 			pdu_adv_tx->connect_ind.sca;
@@ -9446,7 +9446,7 @@ static u8_t version_ind_send(struct connection *conn,
 
 	v = &pdu_data_rx->llctrl.version_ind;
 	conn->llcp_version.version_number = v->version_number;
-	conn->llcp_version. company_id = v->company_id;
+	conn->llcp_version.company_id = v->company_id;
 	conn->llcp_version.sub_version_number = v->sub_version_number;
 	conn->llcp_version.rx = 1;
 
@@ -9894,7 +9894,7 @@ u32_t radio_adv_enable(u16_t interval, u8_t chan_map, u8_t filter_policy,
 	u32_t ticks_slot_offset;
 	struct connection *conn;
 	struct pdu_adv *pdu_adv;
-	u16_t ticks_slot;
+	u32_t slot_us;
 	u8_t chan_cnt;
 	u32_t ret;
 
@@ -10048,16 +10048,16 @@ u32_t radio_adv_enable(u16_t interval, u8_t chan_map, u8_t filter_policy,
 
 	if (pdu_adv->type == PDU_ADV_TYPE_DIRECT_IND) {
 		/* Max. chain is DIRECT_IND * channels + CONNECT_IND */
-		ticks_slot = ((RADIO_TICKER_START_PART_US + 176 + 152 + 40) *
-			      chan_cnt) - 40 + 352;
+		slot_us = ((RADIO_TICKER_START_PART_US + 176 + 152 + 40) *
+			   chan_cnt) - 40 + 352;
 	} else if (pdu_adv->type == PDU_ADV_TYPE_NONCONN_IND) {
-		ticks_slot = (RADIO_TICKER_START_PART_US + 376) * chan_cnt;
+		slot_us = (RADIO_TICKER_START_PART_US + 376) * chan_cnt;
 	} else {
 		/* Max. chain is ADV/SCAN_IND + SCAN_REQ + SCAN_RESP */
-		ticks_slot = (RADIO_TICKER_START_PART_US + 376 + 152 + 176 +
-			      152 + 376) * chan_cnt;
+		slot_us = (RADIO_TICKER_START_PART_US + 376 + 152 + 176 +
+			   152 + 376) * chan_cnt;
 	}
-	_radio.advertiser.hdr.ticks_slot = TICKER_US_TO_TICKS(ticks_slot);
+	_radio.advertiser.hdr.ticks_slot = TICKER_US_TO_TICKS(slot_us);
 
 	ticks_slot_offset =
 		(_radio.advertiser.hdr.ticks_active_to_start <
