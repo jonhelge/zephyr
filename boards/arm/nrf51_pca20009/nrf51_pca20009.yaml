@@ -1,0 +1,10 @@
+identifier: nrf51_pca20009 
+name: nRF51-PCA20009
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gccarmemb
+ram: 32
+supported:
+  - ble

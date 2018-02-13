@@ -13,6 +13,7 @@
 #include <misc/printk.h>
 #include <misc/byteorder.h>
 #include <zephyr.h>
+#include <sensor.h>
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
@@ -108,6 +109,17 @@ void main(void)
 		printk("Bluetooth init failed (err %d)\n", err);
 		return;
 	}
+
+	struct device *adns3000;
+
+
+	printk("IMU: Binding...\n");
+	adns3000 = device_get_binding(CONFIG_ADNS3000_NAME);
+	if (!adns3000) {
+		printk("ADNS3000: Device not found.\n");
+		return;
+	}
+
 
 	bt_conn_cb_register(&conn_callbacks);
 	bt_conn_auth_cb_register(&auth_cb_display);
